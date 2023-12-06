@@ -1,0 +1,21 @@
+- name: Install Cinder packages
+  apt:
+    name:
+      - cinder-api
+      - cinder-scheduler
+      - cinder-volume 
+    state: present
+
+- name: Configure Cinder
+  template:
+    src: cinder.conf.j2
+    dest: /etc/cinder/cinder.conf
+
+- name: Create Cinder database
+  command: cinder-manage db sync
+  become_user: cinder
+      
+- name: Restart Cinder
+  service:
+    name: cinder-volume
+    state: restarted
